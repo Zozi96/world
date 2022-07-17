@@ -1,11 +1,14 @@
 #!/bin/bash
 
-build = $1
+BUILD="${1:-run}"
 
-if [ $build = "build"]; then 
+if [ $1 = "build" ]; then 
     echo "Building image"
     docker build -t world-app .
-else
-    docker run --name world-flask -p 5000:5000 -v app/:/opt/app -w /opt/app --network local --env-file ./.env -d world-app
 fi
 
+docker network create local
+
+docker run --name world-flask -p 5000:5000 -v app:/opt/app -w /opt/app --network local --env-file ./.env -d world-app
+
+docker logs -f world-flask
